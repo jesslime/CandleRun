@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<!--
+	NOTES:
+	1. All tokens are represented by '$' sign in the template.
+	2. You can write your code only wherever mentioned.
+	3. All occurrences of existing tokens will be replaced by their appropriate values.
+	4. Blank lines will be removed automatically.
+	5. Remove unnecessary comments before creating your template.
+-->
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="authoring-tool" content="Adobe_Animate_CC">
+<title>JA_Final_CandleGame_v115_FinalforTurnIN230325_1300</title>
+<!-- write your code here -->
+<script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+<script>
+function LoadGFonts(families, comp) {				
+	var lib=comp.getLibrary();				
+	var googleObject = {type: "Google", loadedFonts: 0, totalFonts: families.length, callOnLoad: lib.gfontAvailable};				
+	for(var i =0; i < families.length; i++)				
+		isFontAvailable(gFontsFamilies[i], googleObject);				
+}
+function isFontAvailable(font, obj) {				
+	var timeOut = 5000;				
+	var delay = 200;				
+	var interval = 0;				
+	var timeElapsed = 0;				
+	function checkFont() {				
+		var node = document.createElement("span");				
+		node.innerHTML = "giItT1WQy@!-/#";				
+		node.style.position      = "absolute";				
+		node.style.left          = "-1000px";				
+		node.style.top           = "-1000px";				
+		node.style.fontSize      = "300px";				
+		node.style.fontFamily    = "sans-serif";				
+		node.style.fontVariant   = "normal";				
+		node.style.fontStyle     = "normal";				
+		node.style.fontWeight    = "normal";				
+		node.style.letterSpacing = "0";				
+		document.body.appendChild(node);				
+		var width = node.offsetWidth;				
+		node.style.fontFamily = font+","+node.style.fontFamily;				
+		var returnVal = false;				
+		if((node && node.offsetWidth != width) || timeElapsed >=timeOut) {				
+			obj.loadedFonts++;				
+			if(interval)				
+				clearInterval(interval);				
+			obj.callOnLoad(font, obj.totalFonts);				
+			returnVal = true;				
+		}				
+		if(node) {				
+			node.parentNode.removeChild(node);				
+			node = null;				
+		}				
+		timeElapsed += delay;				
+		return returnVal;				
+	}				
+	if(!checkFont()) {				
+		interval = setInterval(checkFont, delay);				
+	}				
+}
+</script>
+<script src="https://use.typekit.net/ik/QaEU6aC-YnnDPJJoWCIHZi-tFqziORvm3tm-_E8xZjwfecjJroVIfgJUwQSt5Qwt52FLZcZRwRgRFAZ8Fe9D5QSDFDbaw2ZyZ2SXFcIDFAw3Z2BLSY48ic88ikJPieCljAFTZWJljcBXOWFzde8qH6GJnl6gIMMjgfMfP6medeBD-4Mg_iRVG3j.js"></script>
+<script>
+	var totalTypekitFonts = 1;
+</script>
+<script>
+	var gFontsFamilies = ["IBM Plex Mono","Montserrat"];
+</script>
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:700&subset=latin">
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Montserrat:900&subset=latin">
+<script src="JA_Final_CandleGame_v115_FinalforTurnIN230325_1300.js?1685318769730"></script>
+<script>
+// Global Scripts
+	// Setting Up Game Variables
+var rootRef;
+var player;
+var stageWidth;
+var stageHeight;
+// SCORE
+var score = 0;
+//Keyboard Commands and speed
+var candleSpeed = 10;
+var leftKey = 37;
+var rightKey = 39;
+// My Key up and down kept switching
+var upKey = 40;
+var downKey = 38;
+var leftPress = false;
+var rightPress = false;
+var upPress = false;
+var downPress = false;
+// Variable for Game Items
+var health;
+var healthMax = 100;
+// Creating variable for Canvas bounds to account for zoom
+var stageWidth;
+var stageHeight;
+//Setting variable to adjust bounding box of candle
+var playerScaleY;
+var	playerScaleX;
+var scaleSpeed = .0468;
+var candleHalfWidth;
+var candleHalfHeight;
+var candleXMin;
+var candleXMax;
+var candleYMin;
+var candleYMax;
+//var candleScaleYDefault;
+//var candleScaleXDefault;
+var candleScaleYMax = 1.37;//2.10;
+var candleScaleYMin = .6256;//1.25;
+var candleScaleXMax = 1.37;//2.10;
+var candleScaleXMin = .6256;//1.25;
+var tableBGStartX;
+var tableBGStartY;
+var speedBG;
+/*var puddleStartX;
+var puddleStartY;
+var potionStartX;
+var potionStartY;*/
+// Setting Up Game Functions
+function getStageBounds()
+{
+	stageWidth = Math.round(stage.canvas.width / stage.scaleX);
+	stageHeight = Math.round(stage.canvas.height / stage.scaleY);
+	//console.log("stageWidth: "+stageWidth);
+	//console.log("stageHeight: "+stageHeight);
+}
+function onWindowResize(evt)
+{
+	getStageBounds();
+}
+// Game Musiiiiccc yessss
+function playBGMusic()
+{
+	createjs.Sound.play("Music");
+}
+// Water AND FIRE Array Stuff
+var droplets = new Array();
+var dropletSpeedMin = 9;
+var dropletSpeedMax = 25;
+var dropletXOffset = 40;
+var dropletXMin = 0 + dropletXOffset;
+var dropletXMax;
+var dropletYMin = -500;
+var dropletYMax = -100;
+var numDroplets = 4;
+var dropletDropDamage = 10;
+var bookDropDamage = 30;
+// FIRE
+var embers = new Array();
+var emberSpeedMin = 9;
+var emberSpeedMax = 25;
+var emberXOffset = 40;
+var emberXMin = -500; //+ emberXOffset;
+var emberXMax;
+var emberYMin = 478;
+var emberYMax = 630;
+var numEmbers = 3;
+var emberPoints = 15;
+/*/ BOOK
+var bookfalls = new Array();
+var bookfallSpeedMin = 9;
+var bookfallSpeedMax = 25;
+var bookfallXOffset = 40;
+var bookfallXMin = 0 + dropletXOffset;
+var bookfallXMax;
+var bookfallYMin = 0;
+var bookfallYMax = 100;
+var numBookfall = 2;*/
+// get the sum total the scale of the respective axis recursively up the given MovieClip's parent hierarchy
+function getScaleFactor(mc, axis = "both x and y", scaleFactor = 1)
+{
+	switch (axis)
+	{
+		case ("x"):
+			scaleFactor *= mc.scaleX;
+			break;
+		case ("y"):
+			scaleFactor *= mc.scaleY;
+			break;
+		default:
+			scaleFactor *= mc.scale;
+			break;
+	}
+	if ((mc.parent != rootRef))
+	{
+		scaleFactor *= getScaleFactor(mc.parent, axis, scaleFactor);
+	}
+	return scaleFactor;
+}
+// HITTESTS
+// this is the most reliable hitTest since it works for rotated and scaled MCs
+function hitTestPoint(mc, globalX, globalY)
+{
+	// scale the global coordinates to match the stage size
+	globalX *= stage.scaleX;
+	globalY *= stage.scaleY;
+	var localPt = mc.globalToLocal(globalX, globalY);
+	return mc.hitTest(localPt.x, localPt.y);
+}
+// uses local positional point of nested MC vs given target MC
+// works for rotated and scaled MCs
+function hitTestPointNestedMC(targetMC, nestedMC)
+{
+	var globalPt = nestedMC.parent.localToGlobal(nestedMC.x, nestedMC.y);
+	var localPt = targetMC.globalToLocal(globalPt.x, globalPt.y);
+	return targetMC.hitTest(localPt.x, localPt.y);
+}
+// works with scaled MCs but NOT with rotated MCs
+// also works with nested MCs
+// assumes center registration to calculate halfWidth & halfHeight
+function hitTestMCBounds(mc1, mc2)
+{
+	var globalPt1 = mc1.parent.localToGlobal(mc1.x, mc1.y);
+	var globalPt2 = mc2.parent.localToGlobal(mc2.x, mc2.y);
+	var xDist = globalPt2.x - globalPt1.x;
+	var yDist = globalPt2.y - globalPt1.y;
+	var mc1HalfWidth = (mc1.nominalBounds.width * getScaleFactor(mc1, "x")) / 2;
+	var mc1HalfHeight = (mc1.nominalBounds.height * getScaleFactor(mc1, "y")) / 2;
+	var mc2HalfWidth = (mc2.nominalBounds.width * getScaleFactor(mc2, "x")) / 2;
+	var mc2HalfHeight = (mc2.nominalBounds.height * getScaleFactor(mc2, "y")) / 2;
+	var rangeX = mc1HalfWidth + mc2HalfWidth;
+	var rangeY = mc1HalfHeight + mc2HalfHeight;
+	rangeX *= stage.scaleX;
+	rangeY *= stage.scaleY;
+	return Math.abs(xDist) < rangeX && Math.abs(yDist) < rangeY;
+}
+// does NOT work with rotated or scaled MCs
+function hitTestMC(mc1, mc2)
+{
+	var xDist = mc2.x - mc1.x;
+	var yDist = mc2.y - mc1.y;
+	return mc1.hitTest(xDist, yDist);
+}
+// NOT  true hitTest
+// merely checks if distance between two MCs is within given range
+// scale and rotation are irrelevant
+function checkDistanceWithinRange(mc1, mc2, rangeX, rangeY)
+{
+	var xDist = mc2.x - mc1.x;
+	var yDist = mc2.y - mc1.y;
+	return Math.abs(xDist) < rangeX && Math.abs(yDist) < rangeY;
+}
+function calculateCandleBounds()
+{
+	// Setting boundary of MainCharacter
+	candleWidth = rootRef.candle1.hit.nominalBounds.width / 2;
+	candleHeight = rootRef.candle1.hit.nominalBounds.height / 2;
+	candleWidth *= rootRef.candle1.scaleX;
+	candleHeight *= rootRef.candle1.scaleY;
+	candleHalfWidth = candleWidth / 2;
+	candleHalfHeight = candleHeight / 2;
+	candleXMin = 0 + candleHalfWidth;
+	candleXMax = stageWidth - candleHalfWidth;
+	candleYMin = 510;
+	candleYMax = 670;
+}
+/*function constrainCandle()
+{
+	calculateCandleBounds();
+	if(rootRef.candle1.x < candleXMin)
+	{
+		//health = -100;
+		rootRef.candle1.x = candleXMin;
+	}
+	if(rootRef.candle1.x > candleXMax)
+	{
+		rootRef.candle1.x = candleXMax;
+	}
+	if(rootRef.candle1.y < candleYMin)
+	{
+		rootRef.candle1.y = candleYMin;
+	}
+	if(rootRef.candle1.y > candleYMax)
+	{
+		rootRef.candle1.y = candleYMax;
+	}
+}
+/*
+function endGame()
+{
+	createjs.Ticker.removeEventListener("tick", onMainTick);
+	window.removeEventListener("keydown", onKeyDown);
+	window.removeEventListener("keyup", onKeyUp);
+}
+*/
+// RANDOM
+function randomNumber(min, max)
+{
+	if (min > max)
+	{
+		var swapTemp = min;
+		min = max;
+		max = swapTemp;
+	}
+    var randomNum = (Math.random() * (max - min)) + min;
+    return randomNum;
+}
+function randomInteger(min, max)
+{	
+	if (min > max)
+		{
+		var swapTemp = min;
+		min = max;
+		max = swapTemp;
+	}
+    var randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+    return randomNum;
+}</script>
+<script>
+var canvas, stage, exportRoot, anim_container, dom_overlay_container, fnStartAnimation;
+function init() {
+	canvas = document.getElementById("canvas");
+	anim_container = document.getElementById("animation_container");
+	dom_overlay_container = document.getElementById("dom_overlay_container");
+	var comp=AdobeAn.getComposition("95573411BE4243B2B9FF519342FC8CD8");
+	var lib=comp.getLibrary();
+	try {
+		if(!(typeof gFontsFamilies === 'undefined' || gFontsFamilies === null))
+			LoadGFonts(gFontsFamilies, comp);		
+		if(!(typeof totalTypekitFonts === 'undefined' || totalTypekitFonts === null)) {			
+			var typekitObject = {type: 'Typekit', loadedFonts: 0, totalFonts: totalTypekitFonts, callOnLoad: lib.tfontAvailable};		
+			Typekit.load({
+			async: true,
+			'fontactive': function(family) {
+				isFontAvailable(family, typekitObject);
+				}
+			});
+		}
+	} catch(e) {};
+	var loader = new createjs.LoadQueue(false);
+	loader.installPlugin(createjs.Sound);
+	loader.addEventListener("fileload", function(evt){handleFileLoad(evt,comp)});
+	loader.addEventListener("complete", function(evt){handleComplete(evt,comp)});
+	var lib=comp.getLibrary();
+	loader.loadManifest(lib.properties.manifest);
+}
+function handleFileLoad(evt, comp) {
+	var images=comp.getImages();	
+	if (evt && (evt.item.type == "image")) { images[evt.item.id] = evt.result; }	
+}
+function handleComplete(evt,comp) {
+	//This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
+	var lib=comp.getLibrary();
+	var ss=comp.getSpriteSheet();
+	var queue = evt.target;
+	var ssMetadata = lib.ssMetadata;
+	for(i=0; i<ssMetadata.length; i++) {
+		ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
+	}
+	var preloaderDiv = document.getElementById("_preload_div_");
+	preloaderDiv.style.display = 'none';
+	canvas.style.display = 'block';
+	exportRoot = new lib.JA_Final_CandleGame_v115_FinalforTurnIN230325_1300();
+	exportRoot.addEventListener("tick", AdobeAn.handleFilterCache);
+	stage = new lib.Stage(canvas);
+	stage.enableMouseOver();	
+	//Registers the "tick" event listener.
+	fnStartAnimation = function() {
+		stage.addChild(exportRoot);
+		createjs.Ticker.framerate = lib.properties.fps;
+		createjs.Ticker.addEventListener("tick", stage);
+	}	    
+	//Code to support hidpi screens and responsive scaling.
+	AdobeAn.makeResponsive(true,'both',true,1,[canvas,preloaderDiv,anim_container,dom_overlay_container]);	
+	AdobeAn.compositionLoaded(lib.properties.id);
+	fnStartAnimation();
+}
+function playSound(id, loop, offset) {
+	return createjs.Sound.play(id, {'interrupt':createjs.Sound.INTERRUPT_EARLY, 'loop': loop, 'offset': offset});}
+</script>
+<!-- write your code here -->
+</head>
+<body onload="init();" style="margin:0px;">
+	<div id="animation_container" style="background-color:rgba(51, 51, 51, 1.00); width:540px; height:960px">
+		<canvas id="canvas" width="540" height="960" style="position: absolute; display: none; background-color:rgba(51, 51, 51, 1.00);"></canvas>
+		<div id="dom_overlay_container" style="pointer-events:none; overflow:hidden; width:540px; height:960px; position: absolute; left: 0px; top: 0px; display: none;">
+		</div>
+	</div>
+    <div id='_preload_div_' style='position:absolute; top:0; left:0; display: inline-block; height:960px; width: 540px; text-align: center;'>	<span style='display: inline-block; height: 100%; vertical-align: middle;'></span>	<img src=images/_preloader.gif?1685318769731 style='vertical-align: middle; max-height: 100%'/></div>
+</body>
+</html>
